@@ -32,19 +32,12 @@ export default class App extends Lightning.Component {
         h: 1080,
         color: 0xfffbb03b,
       },
-      Logo: {
-        mountX: 0.5,
-        mountY: 1,
-        x: 960,
-        y: 600,
-        src: Utils.asset('images/logo.png'),
-      },
       Text: {
-        mount: 0.5,
-        x: 960,
-        y: 720,
+        mount: 0,
+        x: 50,
+        y: 50,
         text: {
-          text: "Let's start Building!",
+          text: 'No-theme',
           fontFace: 'Regular',
           fontSize: 64,
           textColor: 0xbbffffff,
@@ -53,19 +46,47 @@ export default class App extends Lightning.Component {
     }
   }
 
+  static _states() {
+    return [
+      class DarkTheme extends this {
+        $enter() {
+          this.tag('Background').patch({
+            color: 0xff000000,
+          })
+          this.tag('Text').patch({
+            text: {
+              text: 'Dark',
+            },
+          })
+        }
+      },
+      class LightTheme extends this {
+        $enter() {
+          this.tag('Background').patch({
+            color: 0xfffcdab6,
+          })
+          this.tag('Text').patch({
+            text: {
+              text: 'Light',
+            },
+          })
+        }
+      },
+    ]
+  }
+
   _init() {
-    this.tag('Background')
-      .animation({
-        duration: 15,
-        repeat: -1,
-        actions: [
-          {
-            t: '',
-            p: 'color',
-            v: { 0: { v: 0xfffbb03b }, 0.5: { v: 0xfff46730 }, 0.8: { v: 0xfffbb03b } },
-          },
-        ],
-      })
-      .start()
+    this.theme = 'light'
+  }
+
+  _handleEnter() {
+    if (this.theme === 'light') {
+      this.theme = 'dark'
+      this._setState('DarkTheme')
+    } else {
+      this.theme = 'light'
+      this._setState('LightTheme')
+    }
+    console.debug('handleEnter: theme=' + this.theme)
   }
 }
